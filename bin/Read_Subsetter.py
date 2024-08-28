@@ -20,6 +20,7 @@ def count_bases(reads):
     return int(match.group(1)) if match else 0
 
 def subset_bases(args, row):
+    index, row = row 
     reads = row['Reads'].split(',')
     if len(reads) > 1:
         cmd = (f"reformat.sh in={reads[0]} in2={reads[1]} "
@@ -64,8 +65,8 @@ def validate_directories(read_dir, output_dir):
 
 args = setup_args()
 read_ext = args.extension.lstrip('.')
-log_file = setup_log(args)
 validate_directories(args.reads, args.output)
+log_file = setup_log(args)
 
 # Find taxa directories
 taxa_dirs = sorted({Path(f).parent for f in Path(args.reads).rglob(f"*.{read_ext}")})
