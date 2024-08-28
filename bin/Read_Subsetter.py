@@ -132,4 +132,4 @@ with open(log_file, 'a') as log:
     log.write(f"\t- Subset scheme written to {args.output}/Subset_Scheme.csv\n")
     log.write("-------------------------------------------------------\n")
 
-print(args.output)
+print(os.path.abspath(args.output))
