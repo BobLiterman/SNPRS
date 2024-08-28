@@ -87,19 +87,27 @@ df = pd.DataFrame(columns=['Taxon', 'Dataset', 'Reads'])
 for tax_dir in taxa_dirs:
     taxon_ID = tax_dir.name
     files = sorted(glob(f"{tax_dir}/*.{read_ext}"))
-    left_files = [f for f in files if args.forward in f]
-    right_files = [f for f in files if args.reverse in f]
 
-    paired_files = {Path(f).stem for f in left_files} & {Path(f).stem for f in right_files}
-    left_pairs = [f"{tax_dir}/{stem}{args.forward}" for stem in paired_files]
-    right_pairs = [f"{tax_dir}/{stem}{args.reverse}" for stem in paired_files]
+    left_files = [s for s in files if args.forward in s]
+    right_files = [s for s in files if args.reverse in s]
+
+    left_files = [x.replace(args.forward, '') for x in left_files]
+    right_files = [x.replace(args.reverse, '') for x in right_files]
+    paired_files = list(set(left_files).intersection(right_files))
+
+    #Reset file names and filter out single-end files
+    left_pairs = []
+    right_pairs = []
+    for pair in paired_files:
+        left_pairs.append(pair+args.forward)
+        right_pairs.append(pair+args.reverse)
     paired_files = sorted(left_pairs + right_pairs)
-    single_end_files = [f for f in files if f not in paired_files]
+    single_end = [x for x in files if x not in paired_files]
 
     for left, right in zip(left_pairs, right_pairs):
-        df = df.append({'Taxon': taxon_ID, 'Dataset': Path(left).stem, 'Reads': f"{left},{right}"}, ignore_index=True)
-    for s in single_end_files:
-        df = df.append({'Taxon': taxon_ID, 'Dataset': Path(s).stem, 'Reads': s}, ignore_index=True)
+        df = df.append({'Taxon': taxon_ID, 'Dataset': os.path.basename(left.replace(args.forward,'')), 'Reads': f"{os.path.abspath(left)},{os.path.abspath(right)}"}, ignore_index=True)
+    for s in single_end:
+        df = df.append({'Taxon': taxon_ID, 'Dataset': os.path.basename(s.replace("."+read_ext,'')), 'Reads': os.path.abspath(s)}, ignore_index=True)
 
 df['Basecount'] = df['Reads'].apply(count_bases)
 df = df.sort_values(by=['Taxon']).reset_index(drop=True)
