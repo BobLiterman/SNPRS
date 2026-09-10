@@ -345,8 +345,7 @@ if args.manual_counts:
     else:
         sys.exit("Manual counts provided by --manual_counts must have the header: 'Sample_ID', 'Group_0', 'Group_1', 'Read_Count','Base_Count', 'Forward', 'Reverse'")
 
-    base_count_df = df[['Sample_ID', 'Base_Count', 'Forward', 'Reverse']].copy()
-    base_count_df['Read_Count'] = np.nan
+    base_count_df = df[['Sample_ID', 'Read_Count','Base_Count', 'Forward', 'Reverse']].copy()
     base_count_df = base_count_df[['Sample_ID', 'Read_Count', 'Base_Count', 'Forward', 'Reverse']]
     group_df = df[['Sample_ID', 'Group_0', 'Group_1', 'Forward', 'Reverse']].copy()
 
