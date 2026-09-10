@@ -13,6 +13,7 @@ def parse_args():
     p.add_argument("-i", "--input_folder", required=True, help="Folder containing dist_*.npy files")
     p.add_argument("-o", "--out", required=True, help="Output PHYLIP file")
     p.add_argument("-c", "--chunk_file", required=True, help="Chunk mapping file")
+    p.add_argument("-d", "--delete",action="store_true")
     return p.parse_args()
 
 def main():
@@ -78,7 +79,9 @@ def main():
             out.write(row_fmt % tuple(matrix[i].tolist()))
 
     del matrix
-    os.remove(tmp.name)
+    if args.delete:
+        os.remove(tmp.name)
+        
     for file in files:
         os.remove(file)
         
