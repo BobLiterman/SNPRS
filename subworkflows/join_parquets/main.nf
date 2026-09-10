@@ -97,7 +97,7 @@ process INITIATE_SCAFFOLD{
 }
 
 process SCORE_SCAFFOLD_CHUNK{
-    cpus 5
+    cpus sample_cpu
         
     input:
     val(scaffold_chunk)
